@@ -6,16 +6,21 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
 public class HomeController {
+	
+	@Autowired
+	FileUploadService fileUploadService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
@@ -34,6 +39,14 @@ public class HomeController {
 		model.addAttribute("serverTime", formattedDate );
 		
 		return "home";
+	}
+	
+	
+	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	public String upload(Model model, String name, MultipartFile file1) {
+		String url = fileUploadService.restore(file1);
+		model.addAttribute("url", url);
+		return "result";
 	}
 	
 }
