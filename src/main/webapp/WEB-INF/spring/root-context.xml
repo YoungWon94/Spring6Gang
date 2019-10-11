@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-		
+	
+	
+	<bean
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		id="dataSource">
+		<property value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"		
+			name="driverClassName" />
+		<property
+			value="jdbc:log4jdbc:oracle:thin:@localhost:1521:XE" name="url" />
+		<property value="spring" name="username" />
+		<property value="1234" name="password" />
+	</bean>
+
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean"
+		id="SqlSessionFactory">
+		<property name="dataSource" ref="dataSource" />
+		<!-- <property value="classpath:/mybatis-config.xml"
+			name="configLocation" />
+		<property value="classpath:/mappers/**/*Mapper.xml"
+			name="mapperLocations" /> -->
+	</bean>
+
+
+	<bean class="org.mybatis.spring.SqlSessionTemplate"
+		id="sqlSession" destroy-method="clearCache">
+		<constructor-arg name="sqlSessionFactory"
+			ref="SqlSessionFactory" />
+	</bean>
+	
+	<!-- mybatis mapper interface bean 을 자동으로 검색하여 생성함. -->
+	<mybatis-spring:scan base-package="com.spring6.example.model"/>
+	
 </beans>
